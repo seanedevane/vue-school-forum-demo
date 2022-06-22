@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
-
 export default {
   props: {
     posts: {
@@ -40,10 +38,12 @@ export default {
       type: Array
     }
   },
-  data () {
-    return {
-      threads: sourceData.threads,
-      users: sourceData.users
+  computed: {
+    threads () {
+      return this.$store.state.threads
+    },
+    users () {
+      return this.$store.state.users
     }
   },
   methods: {

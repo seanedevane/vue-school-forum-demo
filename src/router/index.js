@@ -3,8 +3,9 @@ import PageNotFound from '@/pages/PageNotFound'
 import PageThreadShow from '@/pages/PageThreadShow'
 import PageForum from '@/pages/PageForum'
 import PageCategory from '@/pages/PageCategory'
-import { createRouter, createWebHistory } from 'vue-router'
+import PageProfile from '@/pages/PageProfile'
 import sourceData from '@/data.json'
+import { createRouter, createWebHistory } from 'vue-router'
 // Define route components
 // Based on documentation from router.vuejs.org
 const routes = [
@@ -12,6 +13,18 @@ const routes = [
     path: '/',
     name: 'Home',
     component: PageHome
+  },
+  {
+    path: '/me',
+    name: 'Profile',
+    component: PageProfile,
+    meta: { toTop: true, smoothScroll: true }
+  },
+  {
+    path: '/me/edit',
+    name: 'ProfileEdit',
+    component: PageProfile,
+    props: { edit: true }
   },
   {
     path: '/category/:id',
@@ -58,5 +71,12 @@ const routes = [
 
 export default createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  // look at specific routes and apply scroll behavior changes to them including scroll to top and smooth animations
+  scrollBehavior (to) {
+    const scroll = {}
+    if (to.meta.toTop) scroll.top = 0
+    if (to.meta.smoothScroll) scroll.behavior = 'smooth'
+    return scroll
+  }
 })

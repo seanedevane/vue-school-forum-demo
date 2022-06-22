@@ -8,24 +8,25 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
-
 export default {
   data () {
     return {
-      threads: sourceData.threads,
-      posts: sourceData.posts,
       text: ''
+    }
+  },
+  computed: {
+    threads () {
+      return this.$store.state.threads
+    },
+    posts () {
+      return this.$store.state.posts
     }
   },
   methods: {
     save () {
       const postId = 'gggg' + Math.random()
       const post = {
-        text: this.text,
-        publishedAt: Math.floor(Date.now() / 1000),
-        threadId: this.id,
-        userId: 'FsCDAk9w8NeXEceLV87arpsXjnQ2'
+        text: this.text
       }
       this.$emit('save', { post }) // use an object here to access based on keys, no need to know the order.
       this.posts.push(post)
