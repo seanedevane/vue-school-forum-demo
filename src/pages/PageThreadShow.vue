@@ -1,6 +1,19 @@
 <template>
   <div class="col-large push-top">
-    <h1>{{ thread.title }}</h1>
+    <h1>{{ thread.title }}
+    <router-link
+      custom=""
+      v-slot="{ navigate }"
+      :to="{name: 'ThreadEdit', params: { id }}"
+    >
+    <button @click="navigate" role="link" class="btn-green btn-small">Edit Thread</button></router-link>
+    </h1>
+    <p>
+      By <a href="#" class="link-unstyled">{{ thread.author.name }}</a>, <BaseDate :timestamp="thread.publishedAt" />.
+      <span style="float: right; margin-top: 2px;" class="hide-mobile text-faded text-small">
+        {{ thread.repliesCount }} replies {{ thread.ContributorsCount }} contributors
+      </span>
+    </p>
     <post-list :posts="threadPosts" />
     <post-editor @save="addPost" />
 
@@ -32,7 +45,7 @@ export default {
       return this.$store.state.posts
     }, // end store calls
     thread () {
-      return this.threads.find(thread => thread.id === this.id)
+      return this.$store.getters.thread(this.id)
     },
     threadPosts () {
       return this.posts.filter(post => post.threadId === this.id)

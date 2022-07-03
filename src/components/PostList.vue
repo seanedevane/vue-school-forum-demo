@@ -8,9 +8,9 @@
                   <img class="avatar-large" :src="userById(post.userId).avatar" alt="">
               </a>
 
-              <p class="desktop-only text-small">107 posts</p>
+              <p class="desktop-only text-small">{{ userById(post.userId).postCount }} posts</p>
 
-              <p class="desktop-only text-small">23 threads</p>
+              <p class="desktop-only text-small">{{ userById(post.userId).threadCount}} threads</p>
 
               <span class="online desktop-only">online</span>
 
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     userById (userId) {
-      return this.users.find(u => u.id === userId)
+      return this.$store.getters.user(userId)
     }
   }
 }

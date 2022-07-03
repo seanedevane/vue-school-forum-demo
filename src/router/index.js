@@ -2,10 +2,12 @@ import PageHome from '@/pages/PageHome'
 import PageNotFound from '@/pages/PageNotFound'
 import PageThreadShow from '@/pages/PageThreadShow'
 import PageThreadCreate from '@/pages/PageThreadCreate'
+import PageThreadEdit from '@/pages/PageThreadEdit'
 import PageForum from '@/pages/PageForum'
 import PageCategory from '@/pages/PageCategory'
 import PageProfile from '@/pages/PageProfile'
 import sourceData from '@/data.json'
+import { findById } from '@/helpers'
 import { createRouter, createWebHistory } from 'vue-router'
 // Define route components
 // Based on documentation from router.vuejs.org
@@ -47,7 +49,7 @@ const routes = [
     beforeEnter (to, from) {
       // check if the thread ID exists
       // to.params is how route guards expose the params of any route
-      const threadExists = sourceData.threads.find(thread => thread.id === to.params.id)
+      const threadExists = findById(sourceData.threads, to.params.id)
       if (threadExists && to.name !== 'PageNotFound') {
       // exists, so continue as normal
       } else {
@@ -64,9 +66,15 @@ const routes = [
     }
   },
   {
-    path: '/form/:forumId/thread/create',
+    path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: PageThreadCreate,
+    props: true
+  },
+  {
+    path: '/thread/:id/edit',
+    name: 'ThreadEdit',
+    component: PageThreadEdit,
     props: true
   },
   {

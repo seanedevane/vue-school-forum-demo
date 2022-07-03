@@ -24,14 +24,10 @@ export default {
   },
   methods: {
     save () {
-      const postId = 'gggg' + Math.random()
       const post = {
         text: this.text
       }
       this.$emit('save', { post }) // use an object here to access based on keys, no need to know the order.
-      this.posts.push(post)
-      this.thread.posts.push(postId)
-
       this.text = ''
     }
   }
