@@ -1,5 +1,5 @@
 <template>
-  <div class="col-full push-top">
+  <div v-if="threadLoaded" class="col-full push-top">
 
       <div class="forum-header">
           <div class="forum-details">
@@ -34,13 +34,28 @@ export default {
       type: String
     }
   },
+  data () {
+    return {
+      threadLoaded: false
+    }
+  },
   computed: {
     forum () {
       return findById(this.$store.state.forums, this.id)
-    },
-    threads () {
-      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
     }
+    // threads () {
+    //   if (!this.forum) return []
+    //   return this.forum.threads.map(threadId => this.$store.getters.thread(threadId).filter(thread => thread.id))
+    // }
+  },
+  async created () {
+    const forum = await this.$store.dispatch('fetchForum', this.id)
+    const threads = await this.$store.dispatch('fetchThreads', { ids: forum.threads })
+    await this.$store.dispatch('fetchUsers', { ids: threads.map(thread => thread.userId) })
+    this.threads = forum.threads.map(threadId =>
+      this.$store.getters.thread(threadId)
+    )
+    this.threadLoaded = true
   }
 }
 </script>

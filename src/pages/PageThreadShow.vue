@@ -9,7 +9,7 @@
     <button @click="navigate" role="link" class="btn-green btn-small">Edit Thread</button></router-link>
     </h1>
     <p>
-      By <a href="#" class="link-unstyled">{{ thread.author.name }}</a>, <BaseDate :timestamp="thread.publishedAt" />.
+      By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a>, <BaseDate :timestamp="thread.publishedAt" />.
       <span style="float: right; margin-top: 2px;" class="hide-mobile text-faded text-small">
         {{ thread.repliesCount }} replies {{ thread.ContributorsCount }} contributors
       </span>
@@ -59,6 +59,16 @@ export default {
       }
       this.$store.dispatch('createPost', post)
     }
+  },
+  async created () {
+    // fetch the thread
+    const thread = await this.$store.dispatch('fetchThread', { id: this.id })
+    // fetch the user
+    this.$store.dispatch('fetchUser', { id: thread.userId })
+    // fetch posts
+    const posts = await this.$store.dispatch('fetchPosts', { ids: thread.posts })
+    const users = posts.map(post => post.userId)
+    this.$store.dispatch('fetchUsers', { ids: users })
   }
 }
 </script>
