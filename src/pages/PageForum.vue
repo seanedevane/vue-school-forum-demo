@@ -1,5 +1,5 @@
 <template>
-  <div v-if="threadLoaded" class="col-full push-top">
+  <div v-if="forum" class="col-full push-top">
 
       <div class="forum-header">
           <div class="forum-details">
@@ -23,6 +23,7 @@
 <script>
 import { findById } from '@/helpers'
 import ThreadList from '@/components/ThreadList'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -42,20 +43,19 @@ export default {
   computed: {
     forum () {
       return findById(this.$store.state.forums, this.id)
+    },
+    threads () {
+      if (!this.forum) return []
+      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
     }
-    // threads () {
-    //   if (!this.forum) return []
-    //   return this.forum.threads.map(threadId => this.$store.getters.thread(threadId).filter(thread => thread.id))
-    // }
+  },
+  methods: {
+    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers'])
   },
   async created () {
-    const forum = await this.$store.dispatch('fetchForum', this.id)
-    const threads = await this.$store.dispatch('fetchThreads', { ids: forum.threads })
-    await this.$store.dispatch('fetchUsers', { ids: threads.map(thread => thread.userId) })
-    this.threads = forum.threads.map(threadId =>
-      this.$store.getters.thread(threadId)
-    )
-    this.threadLoaded = true
+    const forum = await this.fetchForum({ id: this.id })
+    const threads = await this.fetchThreads({ ids: forum.threads })
+    this.fetchUsers({ ids: threads.map(thread => thread.userId) })
   }
 }
 </script>
