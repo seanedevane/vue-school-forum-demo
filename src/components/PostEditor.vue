@@ -1,17 +1,23 @@
 <template>
   <div class="col-full">
     <form @submit.prevent="save" >
-      <textarea v-model="text" name="" id="" class="form-input" />
-      <button class="btn-blue">Submit post</button>
+      <textarea v-model="postCopy.text" name="" id="" class="form-input" />
+      <button class="btn-blue">{{ post.id ? 'Update Post' : 'Submit Post' }}</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    post: {
+      type: Object,
+      default: () => ({ text: null })
+    }
+  },
   data () {
     return {
-      text: ''
+      postCopy: { ...this.post }
     }
   },
   computed: {
@@ -24,11 +30,8 @@ export default {
   },
   methods: {
     save () {
-      const post = {
-        text: this.text
-      }
-      this.$emit('save', { post }) // use an object here to access based on keys, no need to know the order.
-      this.text = ''
+      this.$emit('save', { post: this.postCopy }) // use an object here to access based on keys, no need to know the order.
+      this.postCopy.text = ''
     }
   }
 }

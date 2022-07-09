@@ -1,8 +1,14 @@
-import { upsert, findById } from '@/helpers'
+import { upsert, findById, docToResource } from '@/helpers'
 export default {
   // generic mutation
   setItem (state, { resource, item }) {
-    upsert(state[resource], item)
+    upsert(state[resource], docToResource(item))
+  },
+  appendUnsubscribe (state, { unsubscribe }) {
+    state.unsubscribes.push(unsubscribe)
+  },
+  clearAllUnsubscribes (state) {
+    state.unsubscribes = []
   },
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
   appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' }),

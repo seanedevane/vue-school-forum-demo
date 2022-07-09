@@ -16,8 +16,8 @@
 
                   <span class="online">{{ user.username}} is online</span>
                   <div class="stats">
-                      <span>{{ user.postCount }} posts</span>
-                      <span>{{ user.threadCount }} threads</span>
+                      <span>{{ user.postsCount }} posts</span>
+                      <span>{{ user.threadsCount }} threads</span>
                   </div>
 
                   <hr>

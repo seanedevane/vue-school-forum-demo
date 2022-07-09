@@ -6,9 +6,8 @@ import PageThreadEdit from '@/pages/PageThreadEdit'
 import PageForum from '@/pages/PageForum'
 import PageCategory from '@/pages/PageCategory'
 import PageProfile from '@/pages/PageProfile'
-import sourceData from '@/data.json'
-import { findById } from '@/helpers'
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/store'
 // Define route components
 // Based on documentation from router.vuejs.org
 const routes = [
@@ -84,7 +83,7 @@ const routes = [
   }
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
   // look at specific routes and apply scroll behavior changes to them including scroll to top and smooth animations
@@ -95,3 +94,8 @@ export default createRouter({
     return scroll
   }
 })
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnapshots')
+})
+
+export default router
