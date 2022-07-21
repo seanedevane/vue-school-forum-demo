@@ -1,5 +1,5 @@
 <template>
-  <div v-if="forum" class="col-full push-top">
+  <div v-if="asyncDataStatus_ready" class="col-full push-top">
 
       <div class="forum-header">
           <div class="forum-details">
@@ -8,15 +8,13 @@
           </div>
           <router-link :to="{name: 'ThreadCreate', params: { forumId: forum.id }}" class="btn-green btn-small">Start a thread</router-link>
       </div>
-  </div>
 
-  <div class="col-full">
+    <div class="col-full">
+    </div>
 
-  </div>
-
-  <div class="col-full push-top">
-
-    <ThreadList :threads="threads" />
+    <div class="col-full push-top">
+      <ThreadList :threads="threads" />
+    </div>
   </div>
 </template>
 
@@ -24,6 +22,7 @@
 import { findById } from '@/helpers'
 import ThreadList from '@/components/ThreadList'
 import { mapActions } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
   components: {
@@ -40,6 +39,7 @@ export default {
       threadLoaded: false
     }
   },
+  mixins: [asyncDataStatus],
   computed: {
     forum () {
       return findById(this.$store.state.forums, this.id)
@@ -55,7 +55,8 @@ export default {
   async created () {
     const forum = await this.fetchForum({ id: this.id })
     const threads = await this.fetchThreads({ ids: forum.threads })
-    this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+    await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>
