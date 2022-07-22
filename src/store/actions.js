@@ -2,6 +2,28 @@ import firebase from 'firebase'
 import { findById, docToResource } from '@/helpers'
 
 export default {
+  async registerUserWithEmailAndPassword ({ dispatch }, { avatar = null, email, name, username, password }) {
+    const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
+    dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+  },
+  async signInWithEmailAndPassword ({ context }, { email, password }) {
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+  },
+  async signOut ({ commit }) {
+    await firebase.auth().signOut()
+    commit('setAuthId', null)
+  },
+  async createUser ({ commit }, { id, email, name, username, avatar = null }) {
+    const registeredAt = firebase.firestore.FieldValue.serverTimestamp()
+    const usernameLower = username.toLowerCase()
+    email = email.toLowerCase()
+    const user = { id, avatar, email, name, username, usernameLower, registeredAt }
+    const userRef = await firebase.firestore().collection('users').doc(id)
+    userRef.set(user)
+    const newUser = await userRef.get()
+    commit('setItem', { resource: 'users', item: newUser })
+    return docToResource(newUser)
+  },
   updateUser ({ commit }, user) {
     commit('setItem', { resource: 'users', item: user.id })
   },
@@ -98,7 +120,12 @@ export default {
   },
   // fetch singles
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, logMsg: 'user' }),
-  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchUser', { id: state.authId }),
+  fetchAuthUser: ({ dispatch, state, commit }) => {
+    const userId = firebase.auth().currentUser?.uid
+    if (!userId) return
+    dispatch('fetchItem', { logMsg: 'user', resource: 'users', id: userId })
+    commit('setAuthId', userId)
+  },
   fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, logMsg: 'category' }),
   fetchForum: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'forums', id, logMsg: 'forum' }),
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, logMsg: 'thread' }),

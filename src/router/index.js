@@ -6,6 +6,8 @@ import PageThreadEdit from '@/pages/PageThreadEdit'
 import PageForum from '@/pages/PageForum'
 import PageCategory from '@/pages/PageCategory'
 import PageProfile from '@/pages/PageProfile'
+import PageRegister from '@/pages/PageRegister'
+import PageSignIn from '@/pages/PageSignIn'
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store'
 // Define route components
@@ -75,6 +77,16 @@ const routes = [
     name: 'ThreadEdit',
     component: PageThreadEdit,
     props: true
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: PageRegister
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: PageSignIn
   },
   {
     path: '/:pathMatch(.*)*',
