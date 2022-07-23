@@ -6,6 +6,16 @@ export default {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
     dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
   },
+  async signInWithGoogle ({ dispatch }) {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    const response = await firebase.auth().signInWithPopup(provider)
+    const user = response.user
+    const userRef = firebase.firestore().collection('users').doc(user.uid)
+    const userDoc = await userRef.get()
+    if (!userDoc.exists) {
+      return dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+    }
+  },
   async signInWithEmailAndPassword ({ context }, { email, password }) {
     return firebase.auth().signInWithEmailAndPassword(email, password)
   },
@@ -123,7 +133,14 @@ export default {
   fetchAuthUser: ({ dispatch, state, commit }) => {
     const userId = firebase.auth().currentUser?.uid
     if (!userId) return
-    dispatch('fetchItem', { logMsg: 'user', resource: 'users', id: userId })
+    dispatch('fetchItem', {
+      logMsg: 'user',
+      resource: 'users',
+      id: userId,
+      handleUnsubscribe: (unsubscribe) => {
+        commit('setAuthUserUnsubscribe', unsubscribe)
+      }
+    })
     commit('setAuthId', userId)
   },
   fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, logMsg: 'category' }),
@@ -137,7 +154,7 @@ export default {
   fetchThreads: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'threads', ids, logMsg: 'threads' }),
   fetchPosts: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'posts', ids, logMsg: 'posts' }),
   // generic action
-  fetchItem ({ state, commit }, { id, logMsg, resource }) {
+  fetchItem ({ state, commit }, { id, logMsg, resource, handleUnsubscribe = null }) {
     console.log('Firebase ' + logMsg + ' id ' + id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot(doc => {
@@ -145,7 +162,11 @@ export default {
         commit('setItem', { resource, id, item })
         resolve(item)
       })
-      commit('appendUnsubscribe', { unsubscribe })
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe)
+      } else {
+        commit('appendUnsubscribe', { unsubscribe })
+      }
     })
   },
   fetchItems ({ dispatch }, { ids, resource, logMsg }) {
@@ -154,5 +175,11 @@ export default {
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes')
+  },
+  async unsubscribeAuthUserSnapshot ({ state, commit }) {
+    if (state.authUserUnsubscribe) {
+      state.authUserUnsubscribe()
+      commit('setAuthUserUnsubscribe', null)
+    }
   }
 }
