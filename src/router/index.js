@@ -10,6 +10,7 @@ import PageRegister from '@/pages/PageRegister'
 import PageSignIn from '@/pages/PageSignIn'
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store'
+import { findById } from '@/helpers'
 // Define route components
 // Based on documentation from router.vuejs.org
 const routes = [
@@ -22,7 +23,7 @@ const routes = [
     path: '/me',
     name: 'Profile',
     component: PageProfile,
-    meta: { toTop: true, smoothScroll: true }
+    meta: { toTop: true, smoothScroll: true, requiresAuth: true }
   },
   {
     path: '/me/edit',
@@ -46,25 +47,26 @@ const routes = [
     path: '/thread/:id',
     name: 'ThreadShow',
     component: PageThreadShow,
-    props: true
-    // beforeEnter (to, from) {
-    //   // check if the thread ID exists
-    //   // to.params is how route guards expose the params of any route
-    //   const threadExists = findById(sourceData.threads, to.params.id)
-    //   if (threadExists && to.name !== 'PageNotFound') {
-    //   // exists, so continue as normal
-    //   } else {
-    //     // if it doesn't redirect to PageNotFound
-    //     return {
-    //       name: 'PageNotFound',
-    //       // shows you the URL entered before being re-routed.
-    //       params: { pathMatch: to.path.substring(1).split('/') },
-    //       // preserve existing query and hash values on an entered URL
-    //       query: to.query,
-    //       hash: to.hash
-    //     }
-    //   }
-    // }
+    props: true,
+    async beforeEnter (to, from) {
+      await store.dispatch('fetchThread', { id: to.params.id })
+      // check if the thread ID exists
+      // to.params is how route guards expose the params of any route
+      const threadExists = findById(store.state.threads, to.params.id)
+      if (threadExists && to.name !== 'PageNotFound') {
+      // exists, so continue as normal
+      } else {
+        // if it doesn't redirect to PageNotFound
+        return {
+          name: 'PageNotFound',
+          // shows you the URL entered before being re-routed.
+          params: { pathMatch: to.path.substring(1).split('/') },
+          // preserve existing query and hash values on an entered URL
+          query: to.query,
+          hash: to.hash
+        }
+      }
+    }
   },
   {
     path: '/forum/:forumId/thread/create',
@@ -89,6 +91,14 @@ const routes = [
     component: PageSignIn
   },
   {
+    path: '/logout',
+    name: 'SignOut',
+    async beforeEnter () {
+      await store.dispatch('signOut')
+      return { name: 'Home' }
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'PageNotFound',
     component: PageNotFound
@@ -106,8 +116,12 @@ const router = createRouter({
     return scroll
   }
 })
-router.beforeEach(() => {
+router.beforeEach(async (to, from) => {
+  await store.dispatch('initAuthentication')
   store.dispatch('unsubscribeAllSnapshots')
+  if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: 'Home' }
+  }
 })
 
 export default router

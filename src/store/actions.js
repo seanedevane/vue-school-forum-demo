@@ -2,6 +2,22 @@ import firebase from 'firebase'
 import { findById, docToResource } from '@/helpers'
 
 export default {
+  initAuthentication ({ dispatch, commit, state }) {
+    if (state.authObserverUnsubscribe) state.authObserverUnsubscribe()
+    return new Promise((resolve) => {
+      const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        console.log('the user has changed')
+        dispatch('unsubscribeAuthUserSnapshot')
+        if (user) {
+          await dispatch('fetchAuthUser')
+          resolve(user)
+        } else {
+          resolve(null)
+        }
+      })
+      commit('setAuthObserverUnsubscribe', unsubscribe)
+    })
+  },
   async registerUserWithEmailAndPassword ({ dispatch }, { avatar = null, email, name, username, password }) {
     const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
     dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
@@ -130,10 +146,10 @@ export default {
   },
   // fetch singles
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, logMsg: 'user' }),
-  fetchAuthUser: ({ dispatch, state, commit }) => {
+  fetchAuthUser: async ({ dispatch, state, commit }) => {
     const userId = firebase.auth().currentUser?.uid
     if (!userId) return
-    dispatch('fetchItem', {
+    await dispatch('fetchItem', {
       logMsg: 'user',
       resource: 'users',
       id: userId,
@@ -158,9 +174,13 @@ export default {
     console.log('Firebase ' + logMsg + ' id ' + id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot(doc => {
-        const item = { ...doc.data(), id: doc.id }
-        commit('setItem', { resource, id, item })
-        resolve(item)
+        if (doc.exists) {
+          const item = { ...doc.data(), id: doc.id }
+          commit('setItem', { resource, id, item })
+          resolve(item)
+        } else {
+          resolve(null)
+        }
       })
       if (handleUnsubscribe) {
         handleUnsubscribe(unsubscribe)

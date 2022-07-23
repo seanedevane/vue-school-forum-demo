@@ -2,7 +2,7 @@
   <div v-if="asyncDataStatus_ready" class="col-full push-top">
 
     <h1>Create new thread in <i>{{ forum.name }}</i></h1>
-    <ThreadEditor @save="save" @cancel="cancel" />
+    <ThreadEditor @save="save" @cancel="cancel" @dirty="formIsDirty = true" @clean="formIsDirty = false" />
  </div>
 </template>
 
@@ -15,6 +15,11 @@ import asyncDataStatus from '@/mixins/asyncDataStatus'
 export default {
   components: {
     ThreadEditor
+  },
+  data () {
+    return {
+      formIsDirty: false
+    }
   },
   props: {
     forumId: {
@@ -45,6 +50,12 @@ export default {
   async created () {
     await this.fetchForum({ id: this.forumId })
     this.asyncDataStatus_fetched()
+  },
+  beforeRouteLeave () {
+    if (this.formIsDirty) {
+      const confirmed = window.confirm('Are you sure you want to leave? Unsaved changes will be lost!')
+      if (!confirmed) return false
+    }
   }
 }
 </script>
