@@ -29,7 +29,8 @@ const routes = [
     path: '/me/edit',
     name: 'ProfileEdit',
     component: PageProfile,
-    props: { edit: true }
+    props: { edit: true },
+    meta: { requiresAuth: true }
   },
   {
     path: '/category/:id',
@@ -72,23 +73,29 @@ const routes = [
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: PageThreadCreate,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
+
   },
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
     component: PageThreadEdit,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
+
   },
   {
     path: '/register',
     name: 'Register',
-    component: PageRegister
+    component: PageRegister,
+    meta: { requiresGuest: true }
   },
   {
     path: '/signin',
     name: 'SignIn',
-    component: PageSignIn
+    component: PageSignIn,
+    meta: { requiresGuest: true }
   },
   {
     path: '/logout',
@@ -120,6 +127,9 @@ router.beforeEach(async (to, from) => {
   await store.dispatch('initAuthentication')
   store.dispatch('unsubscribeAllSnapshots')
   if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: 'SignIn', query: { redirectTo: to.path } }
+  }
+  if (to.meta.requiresGuest && store.state.authId) {
     return { name: 'Home' }
   }
 })

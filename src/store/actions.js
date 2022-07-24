@@ -50,7 +50,18 @@ export default {
     commit('setItem', { resource: 'users', item: newUser })
     return docToResource(newUser)
   },
-  updateUser ({ commit }, user) {
+  async updateUser ({ commit }, user) {
+    const updates = {
+      avatar: user.avatar || null,
+      username: user.username || null,
+      name: user.name || null,
+      bio: user.bio || null,
+      website: user.website || null,
+      email: user.email || null,
+      location: user.location || null
+    }
+    const userRef = firebase.firestore().collection('users').doc(user.id)
+    await userRef.update(updates)
     commit('setItem', { resource: 'users', item: user.id })
   },
   async createThread ({ commit, state, dispatch }, { text, title, forumId }) {
@@ -128,6 +139,12 @@ export default {
     await postRef.update(post)
     const updatedPost = await postRef.get()
     commit('setItem', { resource: 'posts', item: updatedPost })
+  },
+  async fetchAuthUsersPosts ({ commit, state }) {
+    const posts = await firebase.firestore().collection('posts').where('userId', '==', state.authId).get()
+    posts.forEach(item => {
+      commit('setItem', { resource: 'posts', item })
+    })
   },
   // fetch alls
   fetchAllCategories ({ commit }) {
