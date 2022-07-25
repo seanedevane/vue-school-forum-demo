@@ -8,13 +8,13 @@ export default {
   getters: {
     user: (state, getters, rootState) => {
       return (id) => {
-        const user = findById(state.users, id)
+        const user = findById(state.items, id)
         if (!user) return null
         return {
           ...user,
           // the get function below allows for you to access the below as props, like autUser.posts
           get posts () {
-            return rootState.posts.filter(post => post.userId === user.id)
+            return rootState.posts.items.filter(post => post.userId === user.id)
           },
           get postsCount () {
             return user.postsCount || 0

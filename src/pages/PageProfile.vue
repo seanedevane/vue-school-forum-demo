@@ -51,10 +51,10 @@ export default {
   },
   mixins: [asyncDataStatus],
   computed: {
-    ...mapGetters({ user: 'authUser' })
+    ...mapGetters('auth', { user: 'authUser' })
   },
   async created () {
-    await this.$store.dispatch('fetchAuthUsersPosts')
+    await this.$store.dispatch('auth/fetchAuthUsersPosts')
     this.asyncDataStatus_fetched()
   }
 

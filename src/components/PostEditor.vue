@@ -20,14 +20,6 @@ export default {
       postCopy: { ...this.post }
     }
   },
-  computed: {
-    threads () {
-      return this.$store.state.items
-    },
-    posts () {
-      return this.$store.state.posts
-    }
-  },
   methods: {
     save () {
       this.$emit('save', { post: this.postCopy }) // use an object here to access based on keys, no need to know the order.

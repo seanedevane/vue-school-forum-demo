@@ -19,7 +19,7 @@ export default {
           })
           resolve(categories)
         })
-        commit('appendUnsubscribe', { unsubscribe })
+        commit('appendUnsubscribe', { unsubscribe }, { root: true })
       })
     }
   },
