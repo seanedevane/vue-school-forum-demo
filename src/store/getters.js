@@ -17,28 +17,10 @@ export default {
           return user.postsCount || 0
         },
         get threads () {
-          return state.threads.filter(thread => thread.userId === user.id)
+          return state.items.filter(thread => thread.userId === user.id)
         },
         get threadsCount () {
           return user.threads?.length || 0
-        }
-      }
-    }
-  },
-  thread: state => {
-    return (id) => {
-      const thread = findById(state.threads, id)
-      if (!thread) return {}
-      return {
-        ...thread,
-        get author () {
-          return findById(state.users, thread.userId)
-        },
-        get repliesCount () {
-          return thread.posts.length - 1
-        },
-        get countributorsCount () {
-          return thread.contributors?.length
         }
       }
     }

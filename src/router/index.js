@@ -53,7 +53,7 @@ const routes = [
       await store.dispatch('fetchThread', { id: to.params.id })
       // check if the thread ID exists
       // to.params is how route guards expose the params of any route
-      const threadExists = findById(store.state.threads, to.params.id)
+      const threadExists = findById(store.state.items, to.params.id)
       if (threadExists && to.name !== 'PageNotFound') {
       // exists, so continue as normal
       } else {

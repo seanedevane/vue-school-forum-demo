@@ -25,7 +25,7 @@ export default {
   mixins: [asyncDataStatus],
   computed: {
     thread () {
-      return findById(this.$store.state.threads, this.id)
+      return findById(this.$store.state.items, this.id)
     },
     text () {
       const post = findById(this.$store.state.posts, this.thread.posts[0])

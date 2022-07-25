@@ -46,7 +46,7 @@ export default {
     ...mapGetters(['authUser']),
     // Store calls
     threads () {
-      return this.$store.state.threads
+      return this.$store.state.items
     },
     posts () {
       return this.$store.state.posts
