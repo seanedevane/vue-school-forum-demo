@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.1",
+    "@hennge/vue3-pagination": "^1.0.17",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.3",
     "firebase": "^8.10.1",

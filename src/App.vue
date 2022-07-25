@@ -1,7 +1,7 @@
 <template>
   <the-navbar/>
   <div class="container">
-    <router-view v-show="showPage" @ready="onPageReady" :key="$route.path" />
+    <router-view v-show="showPage" @ready="onPageReady" :key="`${$route.path}${JSON.stringify($route.query)}`" />
     <BaseSpinner class="push-top" v-show="!showPage" />
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0;
   }
 
 #nprogress .bar {

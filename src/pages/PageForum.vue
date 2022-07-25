@@ -14,6 +14,11 @@
 
     <div class="col-full push-top">
       <ThreadList :threads="threads" />
+      <v-pagination
+        v-model="page"
+        :pages="totalPages"
+        active-color="#57ADAD"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +41,9 @@ export default {
   },
   data () {
     return {
-      threadLoaded: false
+      threadLoaded: false,
+      page: parseInt(this.$route.query.page) || 1,
+      perPage: 10
     }
   },
   mixins: [asyncDataStatus],
@@ -46,20 +53,34 @@ export default {
     },
     threads () {
       if (!this.forum) return []
-      return this.forum.threads.map(threadId => this.$store.getters['threads/thread'](threadId))
+      return this.$store.state.threads.items
+        .filter(thread => thread.forumId === this.forum.id)
+        .map(thread => this.$store.getters['threads/thread'](thread.id))
+    },
+    threadCount () {
+      return this.forum.threads.length
+    },
+    totalPages () {
+      if (!this.threadCount) return 0
+      return Math.ceil(this.threadCount / this.perPage)
     }
   },
   methods: {
     ...mapActions('forums', ['fetchForum']),
-    ...mapActions('threads', ['fetchThreads']),
+    ...mapActions('threads', ['fetchThreadsByPage']),
     ...mapActions('users', ['fetchUsers'])
 
   },
   async created () {
     const forum = await this.fetchForum({ id: this.id })
-    const threads = await this.fetchThreads({ ids: forum.threads })
+    const threads = await this.fetchThreadsByPage({ ids: forum.threads, page: this.page, perPage: this.perPage })
     await this.fetchUsers({ ids: threads.map(thread => thread.userId) })
     this.asyncDataStatus_fetched()
+  },
+  watch: {
+    async page (page) {
+      this.$router.push({ query: { page: this.page } })
+    }
   }
 }
 </script>
