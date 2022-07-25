@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import { makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 export default {
   namespaced: true,
   state: {
@@ -6,8 +7,8 @@ export default {
   },
   getters: {},
   actions: {
-    fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id, logMsg: 'category' }, { root: true }),
-    fetchCategories: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'categories', ids, logMsg: 'categories' }, { root: true }),
+    fetchCategory: makeFetchItemAction({ logMsg: 'category', resource: 'categories' }),
+    fetchCategories: makeFetchItemsAction({ logMsg: 'categories', resource: 'categories' }),
     fetchAllCategories ({ commit }) {
       console.log('Loading all categories')
       return new Promise((resolve) => {
@@ -19,6 +20,7 @@ export default {
           })
           resolve(categories)
         })
+        // TODO: this unsubscribe may be unnecessary now, not showing in current source.
         commit('appendUnsubscribe', { unsubscribe }, { root: true })
       })
     }

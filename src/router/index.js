@@ -50,7 +50,7 @@ const routes = [
     component: PageThreadShow,
     props: true,
     async beforeEnter (to, from) {
-      await store.dispatch('threads/fetchThread', { id: to.params.id })
+      await store.dispatch('threads/fetchThread', { id: to.params.id, once: true })
       // check if the thread ID exists
       // to.params is how route guards expose the params of any route
       const threadExists = findById(store.state.threads.items, to.params.id)

@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import { makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 export default {
   namespaced: true,
   state: {
@@ -41,8 +42,8 @@ export default {
       const updatedPost = await postRef.get()
       commit('setItem', { resource: 'posts', item: updatedPost }, { root: true })
     },
-    fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, logMsg: 'post' }, { root: true }),
-    fetchPosts: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'posts', ids, logMsg: 'posts' }, { root: true })
+    fetchPost: makeFetchItemAction({ logMsg: 'post', resource: 'posts' }),
+    fetchPosts: makeFetchItemsAction({ logMsg: 'posts', resource: 'posts' })
   },
   mutations: {
   }
