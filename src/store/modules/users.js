@@ -1,11 +1,12 @@
 import firebase from 'firebase'
 import { docToResource, makeAppendChildToParentMutation, findById } from '@/helpers'
 export default {
+  namespaced: true,
   state: {
     items: []
   },
   getters: {
-    user: state => {
+    user: (state, getters, rootState) => {
       return (id) => {
         const user = findById(state.users, id)
         if (!user) return null
@@ -13,13 +14,13 @@ export default {
           ...user,
           // the get function below allows for you to access the below as props, like autUser.posts
           get posts () {
-            return state.posts.filter(post => post.userId === user.id)
+            return rootState.posts.filter(post => post.userId === user.id)
           },
           get postsCount () {
             return user.postsCount || 0
           },
           get threads () {
-            return state.items.filter(thread => thread.userId === user.id)
+            return rootState.threads.items.filter(thread => thread.userId === user.id)
           },
           get threadsCount () {
             return user.threads?.length || 0
@@ -37,7 +38,7 @@ export default {
       const userRef = await firebase.firestore().collection('users').doc(id)
       userRef.set(user)
       const newUser = await userRef.get()
-      commit('setItem', { resource: 'users', item: newUser })
+      commit('setItem', { resource: 'users', item: newUser }, { root: true })
       return docToResource(newUser)
     },
     async updateUser ({ commit }, user) {
@@ -52,10 +53,10 @@ export default {
       }
       const userRef = firebase.firestore().collection('users').doc(user.id)
       await userRef.update(updates)
-      commit('setItem', { resource: 'users', item: user.id })
+      commit('setItem', { resource: 'users', item: user.id }, { root: true })
     },
-    fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, logMsg: 'user' }),
-    fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids, logMsg: 'users' })
+    fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, logMsg: 'user' }, { root: true }),
+    fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids, logMsg: 'users' }, { root: true })
   },
   mutations: {
     appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' })

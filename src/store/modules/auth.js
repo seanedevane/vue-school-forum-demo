@@ -1,13 +1,14 @@
 import firebase from 'firebase'
 export default {
+  namespaced: true,
   state: {
     authId: null,
     authUserUnsubscribe: null,
     authObserverUnsubscribe: null
   },
   getters: {
-    authUser: (state, getters) => {
-      return getters.user(state.authId)
+    authUser: (state, getters, rootState, rootGetters) => {
+      return rootGetters['users/user'](state.authId)
     }
   },
   actions: {
@@ -38,7 +39,7 @@ export default {
       const userRef = firebase.firestore().collection('users').doc(user.uid)
       const userDoc = await userRef.get()
       if (!userDoc.exists) {
-        return dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+        return dispatch('users/createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL }, { root: true })
       }
     },
     async signInWithEmailAndPassword ({ context }, { email, password }) {
@@ -58,13 +59,15 @@ export default {
         handleUnsubscribe: (unsubscribe) => {
           commit('setAuthUserUnsubscribe', unsubscribe)
         }
-      })
+      },
+      { root: true }
+      )
       commit('setAuthId', userId)
     },
     async fetchAuthUsersPosts ({ commit, state }) {
       const posts = await firebase.firestore().collection('posts').where('userId', '==', state.authId).get()
       posts.forEach(item => {
-        commit('setItem', { resource: 'posts', item })
+        commit('setItem', { resource: 'posts', item }, { root: true })
       })
     },
     async unsubscribeAuthUserSnapshot ({ state, commit }) {
