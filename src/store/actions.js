@@ -1,7 +1,8 @@
 import firebase from 'firebase'
+import { findById } from '@/helpers'
 export default {
   // generic actions
-  fetchItem ({ state, commit }, { id, logMsg, resource, handleUnsubscribe = null, once = false }) {
+  fetchItem ({ state, commit }, { id, logMsg, resource, handleUnsubscribe = null, once = false, onSnapshot = null }) {
     console.log('Firebase ' + logMsg + ' id ' + id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot(doc => {
@@ -10,7 +11,13 @@ export default {
         }
         if (doc.exists) {
           const item = { ...doc.data(), id: doc.id }
+          let previousItem = findById(state[resource].items, id)
+          previousItem = previousItem ? { ...previousItem } : null
           commit('setItem', { resource, id, item })
+          if (typeof onSnapshot === 'function') {
+            const isLocal = doc.metadata.hasPendingWrites
+            onSnapshot({ item: { ...item }, previousItem, isLocal })
+          }
           resolve(item)
         } else {
           resolve(null)
@@ -23,8 +30,8 @@ export default {
       }
     })
   },
-  fetchItems ({ dispatch }, { ids, resource, logMsg }) {
-    return Promise.all(ids.map(id => this.dispatch('fetchItem', { id, resource, logMsg })))
+  fetchItems ({ dispatch }, { ids, resource, logMsg, onSnapshot = null }) {
+    return Promise.all(ids.map(id => this.dispatch('fetchItem', { id, resource, logMsg, onSnapshot })))
   },
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())

@@ -4,16 +4,19 @@
     <router-view v-show="showPage" @ready="onPageReady" :key="`${$route.path}${JSON.stringify($route.query)}`" />
     <BaseSpinner class="push-top" v-show="!showPage" />
   </div>
+  <BaseNotifications />
 </template>
 
 <script>
 import TheNavbar from './components/TheNavbar'
+import BaseNotifications from './components/BaseNotifications'
 import { mapActions } from 'vuex'
 import NProgress from 'nprogress'
 export default {
   name: 'App',
   components: {
-    TheNavbar
+    TheNavbar,
+    BaseNotifications
   },
   methods: {
     ...mapActions('auth', ['fetchAuthUser']),

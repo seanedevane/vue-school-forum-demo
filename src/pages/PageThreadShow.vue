@@ -28,12 +28,18 @@ import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import useNotifications from '@/composables/useNotifications'
+import difference from 'lodash/difference'
 
 export default {
   name: 'ThreadShow',
   components: {
     PostList,
     PostEditor
+  },
+  setup () {
+    const { addNotification } = useNotifications()
+    return { addNotification }
   },
   props: {
     id: {
@@ -68,15 +74,37 @@ export default {
         threadId: this.id
       }
       this.createPost(post)
+    },
+    async fetchPostsWithUsers (ids, firstRun = false) {
+      // fetch posts
+      const posts = await this.fetchPosts({
+        ids: ids,
+        onSnapshot: ({ isLocal, previousItem }) => {
+          if (!this.asyncDataStatus_ready || isLocal || firstRun || (previousItem?.edited && !previousItem?.edited?.at)) return
+          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
+        }
+      })
+      const users = posts.map(post => post.userId).concat(this.thread.userId)
+      await this.fetchUsers({ ids: users })
     }
   },
   async created () {
     // fetch the thread
-    const thread = await this.fetchThread({ id: this.id })
-    // fetch posts
-    const posts = await this.fetchPosts({ ids: thread.posts })
-    const users = posts.map(post => post.userId).concat(thread.userId)
-    await this.fetchUsers({ ids: users })
+    const thread = await this.fetchThread({
+      id: this.id,
+      onSnapshot: async ({ isLocal, item, previousItem }) => {
+        console.log(this.asyncDataStatus_ready)
+        if (isLocal || !this.asyncDataStatus_ready) return
+        const newPosts = difference(item.posts, previousItem.posts)
+        const hasNewPosts = newPosts.length > 0
+        if (hasNewPosts) {
+          await this.fetchPostsWithUsers(newPosts)
+        } else {
+          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
+        }
+      }
+    })
+    this.fetchPostsWithUsers(thread.posts, { firstRun: true })
     this.asyncDataStatus_fetched()
   }
 }
