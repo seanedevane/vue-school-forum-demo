@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import useNotifications from '@/composables/useNotifications'
 export default {
   namespaced: true,
   state: {
@@ -30,7 +31,22 @@ export default {
     },
     async registerUserWithEmailAndPassword ({ dispatch }, { avatar = null, email, name, username, password }) {
       const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
-      dispatch('createUser', { id: result.user.uid, avatar, email, name, username })
+      avatar = await dispatch('uploadAvatar', { authId: result.user.uid, file: avatar })
+      dispatch('users/createUser', { id: result.user.uid, avatar, email, name, username }, { root: true })
+    },
+    async uploadAvatar ({ state }, { authId, file, filename }) {
+      if (!file) return null
+      authId = authId || state.authId
+      filename = filename || file.name
+      try {
+        const storageBucket = firebase.storage().ref().child(`uploads/${authId}/images/${Date.now()}-${filename}`)
+        const snapshot = await storageBucket.put(file)
+        const url = await snapshot.ref.getDownloadURL()
+        return url
+      } catch (error) {
+        const { addNotification } = useNotifications()
+        addNotification({ message: 'Error uploading avatar image', type: 'error' })
+      }
     },
     async signInWithGoogle ({ dispatch }) {
       const provider = new firebase.auth.GoogleAuthProvider()

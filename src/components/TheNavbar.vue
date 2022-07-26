@@ -22,7 +22,7 @@ a<template>
                 <a @click.prevent="userDropdownOpen = !userDropdownOpen"
                   v-click-outside="() => userDropdownOpen = false"
                 >
-                    <img class="avatar-small" :src="authUser.avatar" :alt="`${authUser.name} profile picture`">
+                    <BaseAvatarImg class="avatar-small" :src="authUser.avatar" :alt="`${authUser.name} profile picture`" />
                     <span>
                         {{ authUser.name }}
                         <img class="icon-profile" src="../assets/svg/arrow-profile.svg" alt="">

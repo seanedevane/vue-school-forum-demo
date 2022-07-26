@@ -14,7 +14,7 @@
                 {{ thread.repliesCount }} replies
             </p>
 
-        <img class="avatar-medium" :src="userById(thread.userId).avatar" alt="">
+        <BaseAvatarImg class="avatar-medium" :src="userById(thread.userId).avatar" alt="" />
 
         <div>
         <p class="text-xsmall">

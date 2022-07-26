@@ -896,7 +896,7 @@ header > a.logo {
 
 #user-dropdown {
     position: absolute;
-    top: 92px;
+    top: 30px;
     right: 33px;
     z-index: 6;
     display: none;
