@@ -1,6 +1,6 @@
 <template>
 <div class="profile-card">
-          <form @submit.prevent="save">
+          <VeeForm @submit.prevent="save">
             <p class="text-center avatar-edit">
                 <label for="avatar">
                 <BaseAvatarImg
@@ -79,7 +79,7 @@
                 <button class="btn-ghost" @click.prevent="cancel">Cancel</button>
                 <button type="submit" class="btn-blue">Save</button>
             </div>
-          </form>
+          </VeeForm>
         </div>
 </template>
 

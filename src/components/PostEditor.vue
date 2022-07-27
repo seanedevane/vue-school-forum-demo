@@ -1,9 +1,9 @@
 <template>
   <div class="col-full">
-    <form @submit.prevent="save" >
-      <textarea v-model="postCopy.text" name="" id="" class="form-input" />
+    <VeeForm @submit="save" :key="formKey">
+      <BaseFormField v-model="postCopy.text" name="text" rules="required" as="textarea" rows="10" cols="30" />
       <button class="btn-blue">{{ post.id ? 'Update Post' : 'Submit Post' }}</button>
-    </form>
+    </VeeForm>
   </div>
 </template>
 
@@ -17,13 +17,16 @@ export default {
   },
   data () {
     return {
-      postCopy: { ...this.post }
+      postCopy: { ...this.post },
+      // helps vee-validate reload on a new submission so it doesn't automatically display a validation error
+      formKey: Math.random()
     }
   },
   methods: {
     save () {
       this.$emit('save', { post: this.postCopy }) // use an object here to access based on keys, no need to know the order.
       this.postCopy.text = ''
+      this.formKey = Math.random()
     }
   }
 }
