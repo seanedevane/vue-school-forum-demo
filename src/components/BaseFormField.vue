@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/custom-event-name-casing -->
 <template>
   <div class="form-group">
-    <label for="">{{ label }}</label>
+    <label for="name">{{ label }}</label>
     <VeeField
       :name="name"
       :label="label"
@@ -17,6 +17,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     name: { type: String, required: true },
     label: { type: String, required: true },
