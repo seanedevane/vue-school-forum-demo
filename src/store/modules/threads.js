@@ -1,6 +1,6 @@
 import { findById, docToResource, makeAppendChildToParentMutation, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 import chunk from 'lodash/chunk'
-import firebase from 'firebase'
+import firebase from '@/helpers/firebase'
 export default {
   namespaced: true,
   state: {
@@ -19,7 +19,8 @@ export default {
           get repliesCount () {
             return thread.posts.length - 1
           },
-          get countributorsCount () {
+          get contributorsCount () {
+            if (!thread.contributors) return 0
             return thread.contributors?.length
           }
         }
@@ -51,14 +52,13 @@ export default {
       },
       { root: true }
       )
-      commit('users/appendThreadToForum', { parentId: forumId, childId: threadRef.id }, { root: true })
-      commit('forums/appendThreadToUser', { parentId: userId, childId: threadRef.id }, { root: true })
-      await dispatch('posts/createPost', { text, threadId: threadRef.id }, { root: true })
+      commit('forums/appendThreadToForum', { parentId: forumId, childId: threadRef.id }, { root: true })
+      commit('users/appendThreadToUser', { parentId: userId, childId: threadRef.id }, { root: true })
+      await dispatch('posts/createPost', { text, threadId: threadRef.id, firstInThread: true }, { root: true })
       return findById(state.items, threadRef.id)
     },
     async updateThread ({ commit, state, rootState }, { text, title, id }) {
       const thread = findById(state.items, id)
-      console.log('In updateThread' + thread)
       const post = findById(rootState.posts.items, thread.posts[0])
       let newThread = { ...thread, title }
       let newPost = { ...post, text }

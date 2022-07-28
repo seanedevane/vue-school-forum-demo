@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase from '@/helpers/firebase'
 import { makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 export default {
   namespaced: true,
@@ -10,7 +10,6 @@ export default {
     fetchCategory: makeFetchItemAction({ logMsg: 'category', resource: 'categories' }),
     fetchCategories: makeFetchItemsAction({ logMsg: 'categories', resource: 'categories' }),
     fetchAllCategories ({ commit }) {
-      console.log('Loading all categories')
       return new Promise((resolve) => {
         const unsubscribe = firebase.firestore().collection('categories').onSnapshot((querySnapshot) => {
           const categories = querySnapshot.docs.map(doc => {

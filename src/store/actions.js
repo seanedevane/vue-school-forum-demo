@@ -1,9 +1,8 @@
-import firebase from 'firebase'
+import firebase from '@/helpers/firebase'
 import { findById } from '@/helpers'
 export default {
   // generic actions
   fetchItem ({ state, commit }, { id, logMsg, resource, handleUnsubscribe = null, once = false, onSnapshot = null }) {
-    console.log('Firebase ' + logMsg + ' id ' + id)
     return new Promise((resolve) => {
       const unsubscribe = firebase.firestore().collection(resource).doc(id).onSnapshot(doc => {
         if (once) {
@@ -31,7 +30,11 @@ export default {
     })
   },
   fetchItems ({ dispatch }, { ids, resource, logMsg, onSnapshot = null }) {
+    ids = ids || []
     return Promise.all(ids.map(id => this.dispatch('fetchItem', { id, resource, logMsg, onSnapshot })))
+  },
+  clearItems ({ commit }, { modules = [] }) {
+    commit('clearItems', { modules })
   },
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())

@@ -1,6 +1,6 @@
 <template>
 <div class="profile-card">
-          <VeeForm @submit.prevent="save">
+          <VeeForm @submit="save">
             <p class="text-center avatar-edit">
                 <label for="avatar">
                 <BaseAvatarImg
@@ -81,7 +81,7 @@ export default {
     },
     async save () {
       await this.handleRandomAvatarUpload()
-      this.$store.dispatch('users/updateUser', { ...this.activeUser })
+      this.$store.dispatch('users/updateUser', { ...this.activeUser, threads: this.activeUser.threadIds })
       this.$router.push({ name: 'Profile' })
     },
     cancel () {

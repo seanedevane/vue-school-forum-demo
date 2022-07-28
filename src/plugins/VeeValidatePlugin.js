@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase from '@/helpers/firebase'
 import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate'
 import { required, email, min, url } from '@vee-validate/rules'
 import { localize } from '@vee-validate/i18n'

@@ -11,7 +11,7 @@
     <p>
       By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a>, <BaseDate :timestamp="thread.publishedAt" />.
       <span style="float: right; margin-top: 2px;" class="hide-mobile text-faded text-small">
-        {{ thread.repliesCount }} replies {{ thread.ContributorsCount }} contributors
+        {{ thread.repliesCount }} {{ thread.repliesCount === 1 ? 'reply' : 'replies' }} {{ thread.contributorsCount }} {{ thread.contributorsCount === 1 ? 'contributor' : 'contributors' }}
       </span>
     </p>
     <post-list :posts="threadPosts" />
@@ -93,7 +93,6 @@ export default {
     const thread = await this.fetchThread({
       id: this.id,
       onSnapshot: async ({ isLocal, item, previousItem }) => {
-        console.log(this.asyncDataStatus_ready)
         if (isLocal || !this.asyncDataStatus_ready) return
         const newPosts = difference(item.posts, previousItem.posts)
         const hasNewPosts = newPosts.length > 0
