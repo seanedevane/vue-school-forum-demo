@@ -64,6 +64,16 @@ export default {
       await firebase.auth().signOut()
       commit('setAuthId', null)
     },
+    async updateEmail ({ state }, { email }) {
+      firebase.auth().currentUser.updateEmail(email)
+    },
+    async updatePassword ({ state }, { password }) {
+      firebase.auth().currentUser.updatePassword(password)
+    },
+    async reauthenticate ({ state }, { email, password }) {
+      const credential = firebase.auth.EmailAuthProvider.credential(email, password)
+      await firebase.auth().currentUser.reauthenticateWithCredential(credential)
+    },
     fetchAuthUser: async ({ dispatch, state, commit }) => {
       const userId = firebase.auth().currentUser?.uid
       if (!userId) return
