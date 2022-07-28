@@ -1,13 +1,3 @@
-import PageHome from '@/pages/PageHome'
-import PageNotFound from '@/pages/PageNotFound'
-import PageThreadShow from '@/pages/PageThreadShow'
-import PageThreadCreate from '@/pages/PageThreadCreate'
-import PageThreadEdit from '@/pages/PageThreadEdit'
-import PageForum from '@/pages/PageForum'
-import PageCategory from '@/pages/PageCategory'
-import PageProfile from '@/pages/PageProfile'
-import PageRegister from '@/pages/PageRegister'
-import PageSignIn from '@/pages/PageSignIn'
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store'
 import { findById } from '@/helpers'
@@ -17,37 +7,37 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: PageHome
+    component: () => import(/* webpackChunkName: "Home" */'@/pages/PageHome')
   },
   {
     path: '/me',
     name: 'Profile',
-    component: PageProfile,
+    component: () => import(/* webpackChunkName: "Profile" */'@/pages/PageProfile'),
     meta: { toTop: true, smoothScroll: true, requiresAuth: true }
   },
   {
     path: '/me/edit',
     name: 'ProfileEdit',
-    component: PageProfile,
+    component: () => import(/* webpackChunkName: "Profile Edit" */'@/pages/PageProfile'),
     props: { edit: true },
     meta: { requiresAuth: true }
   },
   {
     path: '/category/:id',
     name: 'Category',
-    component: PageCategory,
+    component: () => import(/* webpackChunkName: "Category" */'@/pages/PageCategory'),
     props: true
   },
   {
     path: '/forum/:id',
     name: 'Forum',
-    component: PageForum,
+    component: () => import(/* webpackChunkName: "Forum" */'@/pages/PageForum'),
     props: true
   },
   {
     path: '/thread/:id',
     name: 'ThreadShow',
-    component: PageThreadShow,
+    component: () => import(/* webpackChunkName: "ThreadShow" */'@/pages/PageThreadShow.vue'),
     props: true,
     async beforeEnter (to, from) {
       await store.dispatch('threads/fetchThread', { id: to.params.id, once: true })
@@ -72,7 +62,7 @@ const routes = [
   {
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
-    component: PageThreadCreate,
+    component: () => import(/* webpackChunkName: "ThreadCreate" */'@/pages/PageThreadCreate'),
     props: true,
     meta: { requiresAuth: true }
 
@@ -80,7 +70,7 @@ const routes = [
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
-    component: PageThreadEdit,
+    component: () => import(/* webpackChunkName: "ThreadEdit" */'@/pages/PageThreadEdit'),
     props: true,
     meta: { requiresAuth: true }
 
@@ -88,13 +78,13 @@ const routes = [
   {
     path: '/register',
     name: 'Register',
-    component: PageRegister,
+    component: () => import(/* webpackChunkName: "Register" */'@/pages/PageRegister'),
     meta: { requiresGuest: true }
   },
   {
     path: '/signin',
     name: 'SignIn',
-    component: PageSignIn,
+    component: () => import(/* webpackChunkName: "SignIn" */'@/pages/PageSignIn'),
     meta: { requiresGuest: true }
   },
   {
@@ -108,7 +98,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'PageNotFound',
-    component: PageNotFound
+    component: () => import(/* webpackChunkName: "NotFound" */'@/pages/PageNotFound')
   }
 ]
 

@@ -38,7 +38,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-vue": "^7.0.0",
-    "firestore-export-import": "^1.2.0"
+    "firestore-export-import": "^1.2.0",
+    "vue-cli-plugin-webpack-bundle-analyzer": "~4.0.0"
   },
   "eslintConfig": {
     "root": true,
