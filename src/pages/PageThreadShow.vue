@@ -1,5 +1,10 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="col-large push-top">
+      <BaseHead>
+      <title>{{ thread?.title }}</title>
+      <meta property="og:title" :content="thread?.title" />
+      <meta name="twitter:title" :content="thread?.title" />
+    </BaseHead>
     <h1>{{ thread.title }}
     <router-link
       v-if="thread.userId === authUser?.id"

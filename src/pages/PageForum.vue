@@ -1,6 +1,11 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="col-full push-top">
-
+      <BaseHead>
+        <title>{{ forum?.name }}</title>
+        <meta name="description" :content="forum?.description" />
+        <meta property="og:title" :content="forum?.name" />
+        <meta name="twitter:title" :content="forum?.name" />
+      </BaseHead>
       <div class="forum-header">
           <div class="forum-details">
               <h1>{{ forum.name }}</h1>
