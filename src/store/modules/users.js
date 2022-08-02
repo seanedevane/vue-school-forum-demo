@@ -58,6 +58,23 @@ export default {
       await userRef.update(updates)
       commit('setItem', { resource: 'users', item: user.id }, { root: true })
     },
+    async fetchUsersPosts ({ commit, state }, { id, startAfter }) {
+      // paginating user profile page posts
+      // limit(10)
+      // startAfter(doc)
+      let query = await firebase.firestore().collection('posts')
+        .where('userId', '==', id)
+        .orderBy('publishedAt', 'desc')
+        .limit(10)
+      if (startAfter) {
+        const doc = await firebase.firestore().collection('posts').doc(startAfter.id).get()
+        query = query.startAfter(doc)
+      }
+      const posts = await query.get()
+      posts.forEach(item => {
+        commit('setItem', { resource: 'posts', item }, { root: true })
+      })
+    },
     fetchUser: makeFetchItemAction({ logMsg: 'user', resource: 'users' }),
     fetchUsers: makeFetchItemsAction({ logMsg: 'users', resource: 'users' })
   },

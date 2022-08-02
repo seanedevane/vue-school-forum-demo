@@ -18,7 +18,7 @@
 
         <div>
         <p class="text-xsmall">
-            <a href="profile.html">{{ userById(thread.userId).name }}</a>
+            <router-link :to="{ name: 'UserProfile', params: { id: userById(thread.userId).id }}">{{ userById(thread.userId).name }}</router-link>
         </p>
         <p class="text-xsmall text-faded"> <BaseDate :timestamp="thread.publishedAt" /></p>
             </div>

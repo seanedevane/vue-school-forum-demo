@@ -23,6 +23,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/user/:id',
+    name: 'UserProfile',
+    component: () => import(/* webpackChunkName: "User Profile" */'@/pages/PageProfile'),
+    props: true
+  },
+  {
     path: '/category/:id',
     name: 'Category',
     component: () => import(/* webpackChunkName: "Category" */'@/pages/PageCategory'),

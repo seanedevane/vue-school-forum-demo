@@ -2,7 +2,7 @@
   <div class="post-list">
     <div v-for="post in posts" :key="post.id" class="post">
           <div v-if="userById(post.userId)" class="user-info">
-              <a href="#" class="user-name">{{userById(post.userId).name}}</a>
+              <router-link :to="{ name: 'UserProfile', params: { id: userById(post.userId).id }}" class="user-name">{{userById(post.userId).name}}</router-link>
 
               <a href="#">
                   <BaseAvatarImg class="avatar-large" :src="userById(post.userId).avatar" alt="" />

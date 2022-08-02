@@ -46,7 +46,7 @@ a<template>
             </li>
             <li v-if="!authUser" class="navbar-item"><router-link :to="{ name: 'SignIn'}">Sign In</router-link></li>
             <li v-if="!authUser" class="navbar-item"><router-link :to="{ name: 'Register'}">Register</router-link></li>
-            <li v-if="authUser" class="navbar-mobile-item"><router-link :to="{ name: 'Profile' }">View Profile</router-link></li>
+            <li v-if="authUser" class="navbar-mobile-item"><router-link :to="{ name: 'Profile', params: { id: this.authUser.id } }">View Profile</router-link></li>
             <li v-if="authUser" class="navbar-mobile-item"><a
               @click.prevent="$store.dispatch('auth/signOut'),
               $router.push({ name: 'Home' })
@@ -55,28 +55,6 @@ a<template>
               </a></li>
 
         </ul>
-
-        <!-- <ul>
-            <li class="navbar-item">
-                <a href="index.html">Home</a>
-            </li>
-            <li class="navbar-item">
-                <a href="category.html">Category</a>
-            </li>
-            <li class="navbar-item">
-                <a href="forum.html">Forum</a>
-            </li>
-            <li class="navbar-item">
-                <a href="thread.html">Thread</a>
-            </li>
-            TODO: re-add comment here Show these option only on mobile
-            <li class="navbar-item mobile-only">
-                <a href="profile.html">My Profile</a>
-            </li>
-            <li class="navbar-item mobile-only">
-                <a href="#">Logout</a>
-            </li>
-        </ul> -->
     </nav>
   </header>
 
