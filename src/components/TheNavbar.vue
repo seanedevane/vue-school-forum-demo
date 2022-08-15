@@ -34,7 +34,7 @@ a<template>
                 <div id="user-dropdown" :class="{ 'active-drop': userDropdownOpen }" >
                     <div class="triangle-drop"></div>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-menu-item"><router-link :to="{ name: 'Profile' }">View profile</router-link></li>
+                        <li class="dropdown-menu-item"><router-link :to="{ name: 'AuthUserProfile' }">View profile</router-link></li>
                         <li class="dropdown-menu-item"><a
                           @click="$store.dispatch('auth/signOut'),
                           $router.push({ name: 'Home' })
@@ -46,7 +46,7 @@ a<template>
             </li>
             <li v-if="!authUser" class="navbar-item"><router-link :to="{ name: 'SignIn'}">Sign In</router-link></li>
             <li v-if="!authUser" class="navbar-item"><router-link :to="{ name: 'Register'}">Register</router-link></li>
-            <li v-if="authUser" class="navbar-mobile-item"><router-link :to="{ name: 'Profile', params: { id: this.authUser.id } }">View Profile</router-link></li>
+            <li v-if="authUser" class="navbar-mobile-item"><router-link :to="{ name: 'AuthUserProfile', params: { id: this.authUser.id } }">View Profile</router-link></li>
             <li v-if="authUser" class="navbar-mobile-item"><a
               @click.prevent="$store.dispatch('auth/signOut'),
               $router.push({ name: 'Home' })

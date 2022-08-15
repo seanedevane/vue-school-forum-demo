@@ -11,21 +11,21 @@ const routes = [
   },
   {
     path: '/me',
-    name: 'Profile',
-    component: () => import(/* webpackChunkName: "Profile" */'@/pages/PageProfile'),
+    name: 'AuthUserProfile',
+    component: () => import(/* webpackChunkName: "Profile" */'@/pages/PageAuthUserProfile'),
     meta: { toTop: true, smoothScroll: true, requiresAuth: true }
   },
   {
     path: '/me/edit',
     name: 'ProfileEdit',
-    component: () => import(/* webpackChunkName: "Profile Edit" */'@/pages/PageProfile'),
+    component: () => import(/* webpackChunkName: "Profile Edit" */'@/pages/PageAuthUserProfile'),
     props: { edit: true },
     meta: { requiresAuth: true }
   },
   {
     path: '/user/:id',
     name: 'UserProfile',
-    component: () => import(/* webpackChunkName: "User Profile" */'@/pages/PageProfile'),
+    component: () => import(/* webpackChunkName: "User Profile" */'@/pages/PageUserProfile'),
     props: true
   },
   {

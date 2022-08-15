@@ -96,7 +96,7 @@ export default {
     },
     async saveUserData () {
       await this.$store.dispatch('users/updateUser', { ...this.activeUser, threads: this.activeUser.threadIds })
-      this.$router.push({ name: 'Profile' })
+      this.$router.push({ name: 'AuthUserProfile' })
     },
     async onReauthenticated () {
       if (this.emailChanged) await this.$store.dispatch('auth/updateEmail', { email: this.activeUser.email })
@@ -122,7 +122,7 @@ export default {
       }
     },
     cancel () {
-      this.$router.push({ name: 'Profile' })
+      this.$router.push({ name: 'AuthUserProfile' })
     }
   }
 }

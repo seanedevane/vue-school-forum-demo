@@ -23,16 +23,13 @@
 <script>
 import TheNavbar from './components/TheNavbar'
 import BaseNotifications from './components/BaseNotifications'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import NProgress from 'nprogress'
 export default {
   name: 'App',
   components: {
     TheNavbar,
     BaseNotifications
-  },
-  computed: {
-    ...mapGetters('auth', ['authUser'])
   },
   methods: {
     ...mapActions('auth', ['fetchAuthUser']),
