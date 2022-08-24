@@ -28,7 +28,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getValue } from '@/helpers'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
 import PostList from '@/components/PostList'
 import UserProfileCard from '@/components/UserProfileCard'
