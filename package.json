@@ -16,7 +16,7 @@
     "@vee-validate/i18n": "^4.6.2",
     "@vee-validate/rules": "^4.6.2",
     "@vueuse/head": "^0.7.7",
-    "core-js": "^3.8.3",
+    "core-js": "^3.27.2",
     "dayjs": "^1.11.3",
     "firebase": "^8.10.1",
     "lodash": "^4.17.21",
